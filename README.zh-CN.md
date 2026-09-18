@@ -2,7 +2,7 @@
 
 把**剪辑计划 JSON**（`jianying-plan/v1`）生成**剪映专业版原生草稿**——多轨视频/文字/音频、非破坏式生成、交付前校验。生成的是可在剪映里继续编辑的原生项目，导出仍在剪映内完成。
 
-状态：**v0.1.0**（skills-only 分发；确定性引擎 `scripts/jy_headless/` 逐字 vendor 自 [partme-ai/jy-headless](https://github.com/partme-ai/jy-headless) v0.1.0）
+状态：**v0.2.0**（skills-only 分发；确定性引擎 `scripts/jy_headless/` 逐字 vendor 自 [partme-ai/jy-headless](https://github.com/partme-ai/jy-headless) v0.1.0）
 
 ## 快速开始
 

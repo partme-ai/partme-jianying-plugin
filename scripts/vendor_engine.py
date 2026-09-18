@@ -16,7 +16,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPO = "https://github.com/partme-ai/jy-headless.git"
-REF = "v0.1.0"
+REF = "v0.2.0"
 MANIFEST = ROOT / "scripts" / "VENDOR.json"
 ENGINE_FILES = ("__init__.py", "cli.py", "detect.py", "generate.py")
 

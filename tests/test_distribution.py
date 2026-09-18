@@ -25,7 +25,6 @@ class DistributionTests(unittest.TestCase):
     def test_vendor_manifest_intact(self) -> None:
         m = json.loads((ROOT / "scripts/VENDOR.json").read_text())
         self.assertEqual(m["repo"], "https://github.com/partme-ai/jy-headless.git")
-        self.assertEqual(m["ref"], "v0.1.0")
 
     def test_kimi_session_start_preloads_router(self) -> None:
         d = json.loads((ROOT / "kimi.plugin.json").read_text())

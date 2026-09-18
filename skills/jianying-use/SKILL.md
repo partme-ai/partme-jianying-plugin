@@ -1,6 +1,6 @@
 ---
 name: jianying-use
-description: "Route JianYing (剪映专业版) editing requests: capability preflight first (native app, draft root, vendored engine), then edit-plan to native draft generation, or environment setup. Drafts open as fully editable native JianYing projects."
+description: "Route JianYing (剪映专业版) editing requests: capability preflight first (native app, draft root, vendored engine), then edit-plan to native draft generation, narration condensing, subtitles, audio, motion, transitions, inspection, recovery, or environment setup. Drafts open as fully editable native JianYing projects."
 ---
 
 # JianYing Edit Router
@@ -23,16 +23,21 @@ Read the output and act on it:
   create/open any draft so the draft root is created, then re-run. Windows
   users can also set `JY_DRAFT_ROOT` to a custom draft root.
 - Drafts listed → ready. The primary root is where generated drafts land.
-- macOS requires 剪映专业版 (com.lemon.lvpro); Windows path follows the
-  official installer layout.
 
 ## Routing
 
-- **Edit-plan → native draft** (from a shot table / timeline JSON: video,
-  text/subtitle, audio tracks) → `jianying-edit`.
-- **Environment / install problems** → `jianying-setup`.
-- The generated draft opens in 剪映 as a fully editable native project —
-  fine-tuning, effects, and final export happen in the app.
+| 请求 | 技能 |
+|---|---|
+| 剪辑计划 → 原生草稿（核心工作流） | `jianying-edit` |
+| 长口播 → 精剪版草稿（ASR + 选段） | `jianying-narration` |
+| 字幕轨设计与放置 | `jianying-subtitles` |
+| 音频轨/解说/BGM 分层 | `jianying-audio` |
+| 关键帧动效（推拉/横移/呼吸） | `jianying-motion` |
+| 转场选型与放置 | `jianying-transitions` |
+| 素材/草稿/生成结果探测 | `jianying-inspect` |
+| 同名冲突/恢复/备份 | `jianying-recover` |
+| 导出前检查清单 | `jianying-export-prep` |
+| 环境/安装/排障 | `jianying-setup` + `jianying-harness` |
 
 ## Never do
 

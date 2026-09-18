@@ -37,6 +37,12 @@ must be an existing local media file; draft name must be unique in the draft
 root unless replacement is explicitly accepted; video and text/audio tracks
 are assembled bottom-up in the listed order.
 
+v0.2 optional fields: video clips accept `transition_out` and `keyframes`
+(see `jianying-transitions` / `jianying-motion`); text clips accept full
+TextStyle fields (bold/italic/underline/align/letter_spacing — see
+`jianying-subtitles`). Material durations must be ffprobe-measured, not
+planned values.
+
 ## Workflow
 
 1. **Design the edit plan** from the user's brief or our pipeline artifacts

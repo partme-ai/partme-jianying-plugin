@@ -2,7 +2,7 @@
 
 把**剪辑计划 JSON**（`jianying-plan/v1`）生成**剪映专业版原生草稿**——多轨视频/文字/音频、非破坏式生成、交付前校验。生成的是可在剪映里继续编辑的原生项目，导出仍在剪映内完成。
 
-Status: **v0.1.0**（skills-only 分发；确定性引擎 `scripts/jy_headless/` 逐字 vendor 自 [partme-ai/jy-headless](https://github.com/partme-ai/jy-headless) v0.1.0）
+Status: **v0.2.0**（skills-only 分发；确定性引擎 `scripts/jy_headless/` 逐字 vendor 自 [partme-ai/jy-headless](https://github.com/partme-ai/jy-headless) v0.1.0）
 
 ## Quick start
 
@@ -36,3 +36,20 @@ Status: **v0.1.0**（skills-only 分发；确定性引擎 `scripts/jy_headless/`
 ## License
 
 Apache-2.0（引擎基于 pyJianYingDraft 0.3.0，Apache-2.0）。
+
+## Skills（12，按 blender 家族粒度）
+
+| Skill | 职责 |
+|---|---|
+| `jianying-use` | 路由 + Step 0 能力预检 |
+| `jianying-edit` | 剪辑计划 → 原生草稿（核心工作流） |
+| `jianying-harness` | 引擎 CLI 深用/排障/vendor 说明 |
+| `jianying-inspect` | 素材/草稿/生成结果探测（ffprobe + verify） |
+| `jianying-narration` | 口播精剪流水线（ASR → 选段 → 草稿） |
+| `jianying-subtitles` | 字幕轨设计（对齐语音/安全区/样式） |
+| `jianying-audio` | 音频轨分层（解说/BGM/原声） |
+| `jianying-motion` | 关键帧动效（Ken Burns/位移/旋转） |
+| `jianying-transitions` | 转场目录与放置纪律 |
+| `jianying-export-prep` | 导出前检查清单 |
+| `jianying-recover` | 同名冲突/恢复/备份纪律 |
+| `jianying-setup` | 环境安装与排障 |

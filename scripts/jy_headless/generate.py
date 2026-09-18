@@ -11,9 +11,22 @@ from .detect import draft_roots
 _US = 1_000_000
 
 
+def _apply_optional(seg, clip: dict) -> None:
+    """应用 v0.2 可选字段：转场与关键帧（视频段）。"""
+    tr = clip.get("transition_out")
+    if tr:
+        seg.add_transition(jy.TransitionType[tr["type"]],
+                           duration=int(tr.get("duration_us", 500_000)))
+    for kf in clip.get("keyframes", []):
+        seg.add_keyframe(jy.KeyframeProperty[kf["property"]],
+                         int(kf["time_offset_us"]), float(kf["value"]))
+
+
 def _root(root: str | None) -> Path:
     if root:
-        return Path(root)
+        r = Path(root)
+        r.mkdir(parents=True, exist_ok=True)
+        return r
     roots = draft_roots()
     if not roots:
         raise SystemExit("未找到剪映草稿根目录——确认剪映专业版已安装并启动过，"
@@ -41,6 +54,7 @@ def generate(plan: dict, root: str | None = None, allow_replace: bool = True) ->
                     volume=float(clip.get("volume", 1.0)),
                     speed=float(clip.get("speed", 1.0)) or None,
                 )
+                _apply_optional(seg, clip)
             elif track["type"] == "audio":
                 seg = jy.AudioSegment(
                     jy.AudioMaterial(clip["material"]),
@@ -49,8 +63,14 @@ def generate(plan: dict, root: str | None = None, allow_replace: bool = True) ->
                     volume=float(clip.get("volume", 1.0)),
                 )
             else:
-                style = jy.TextStyle(size=float(clip.get("size", 8.0)),
-                                     color=tuple(clip.get("color", (1.0, 1.0, 1.0))))
+                style = jy.TextStyle(
+                    size=float(clip.get("size", 8.0)),
+                    color=tuple(clip.get("color", (1.0, 1.0, 1.0))),
+                    bold=bool(clip.get("bold", False)),
+                    italic=bool(clip.get("italic", False)),
+                    underline=bool(clip.get("underline", False)),
+                    align=int(clip.get("align", 0)),
+                    letter_spacing=int(clip.get("letter_spacing", 0)))
                 seg = jy.TextSegment(clip["text"],
                                      timerange=Timerange(start=int(clip["start_us"]),
                                                          duration=int(clip["duration_us"])),
