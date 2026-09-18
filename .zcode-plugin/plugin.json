@@ -5,7 +5,7 @@
     "en": "JianYing Edit",
     "zh-CN": "剪映剪辑"
   },
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — multi-track video/text/audio, non-destructive, verified.",
   "description_i18n": {
     "en": "JianYing Pro draft generation from edit-plan JSON: multi-track video/text/audio, non-destructive, verified.",
@@ -27,12 +27,11 @@
   "skills": "./skills/",
   "commands": "./commands",
   "hooks": "./hooks/hooks.json",
-  "userConfig": [
-    {
-      "key": "JY_DRAFT_ROOT",
+  "userConfig": {
+    "JY_DRAFT_ROOT": {
       "type": "directory",
       "title": "剪映草稿根目录",
       "description": "留空自动探测（macOS/Windows 官方路径）；自定义安装位置时手动指定"
     }
-  ]
+  }
 }

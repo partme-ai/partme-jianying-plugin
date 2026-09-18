@@ -1,6 +1,6 @@
 {
   "name": "jianying-edit",
-  "version": "0.1.0+codex.20260919",
+  "version": "0.1.1+codex.20260918",
   "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — multi-track video/text/audio, non-destructive, verified.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
