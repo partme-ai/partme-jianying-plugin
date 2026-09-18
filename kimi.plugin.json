@@ -1,7 +1,7 @@
 {
   "name": "jianying-edit",
-  "version": "0.2.0",
-  "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — multi-track video/text/audio, non-destructive, verified.",
+  "version": "0.7.0",
+  "description": "Native, fully editable JianYing Pro drafts from jy14-headless plans or compiled edit-plans, driven through the user's jianying-headless fork unmodified: multi-track video/text/audio with transitions, keyframes, masks, narration condensing, and native MP4 export. Pinned to macOS JianYing 11.4.x.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI"
   },
@@ -14,8 +14,8 @@
   ],
   "interface": {
     "displayName": "JianYing Edit",
-    "shortDescription": "Edit-plan JSON to native JianYing drafts",
-    "longDescription": "Turn edit-plan JSON into native JianYing Pro drafts via the vendored headless engine: multi-track video/text/audio, non-destructive generation, verified output.",
+    "shortDescription": "jy14 plans to native JianYing drafts",
+    "longDescription": "Native JianYing Pro drafts from jy14-headless plans or compiled edit-plans via the unmodified jianying-headless fork: multi-track video/text/audio, transitions/keyframes/masks, narration condensing, native export.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "websiteURL": "https://github.com/partme-ai/partme-jianying-plugin"
   },
@@ -24,7 +24,7 @@
   "sessionStart": {
     "skill": "jianying-use"
   },
-  "skillInstructions": "加载本插件技能时：生成草稿前先跑 detect 确认剪映环境；已有草稿永不覆盖。",
+  "skillInstructions": "加载本插件技能时：生成草稿前先跑 headless_draft.py doctor 确认 fork 检出与剪映 11.4.x 环境；已有草稿永不覆盖，发布需剪映完全关闭。",
   "hooks": [
     {
       "event": "SessionStart",

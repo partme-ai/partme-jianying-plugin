@@ -40,11 +40,12 @@ def main() -> int:
         fail(f"version not semver: {version}")
     if codex.get("repository") != REPOSITORY:
         fail("codex manifest repository mismatch")
+    base = version.split("+")[0]
     for label, m in (("zcode", zcode), ("kimi", kimi)):
-        if m.get("name") != PLUGIN_ID or m.get("version") != version:
+        if m.get("name") != PLUGIN_ID or m.get("version") not in {version, base}:
             fail(f"{label} manifest name/version must match")
     entry = market["plugins"][0]
-    if entry.get("name") != PLUGIN_ID or entry.get("version") != version:
+    if entry.get("name") != PLUGIN_ID or entry.get("version") not in {version, base}:
         fail("marketplace entry name/version must match")
 
     for legal in LEGAL:
@@ -65,22 +66,34 @@ def main() -> int:
         if len(re.findall(r"^description: ", block, re.MULTILINE)) != 1:
             fail(f"skills/{skill_dir.name}: exactly one description key required")
 
-    # 引擎 vendor 完整性
-    vendor_manifest = load_json("scripts/VENDOR.json")
-    engine_dir = ROOT / "scripts" / "jy_headless"
-    import hashlib
-    for name, digest in vendor_manifest["files"].items():
-        f = engine_dir / name
-        if not f.is_file():
-            fail(f"vendored engine file missing: {name}")
-        if hashlib.sha256(f.read_bytes()).hexdigest() != digest:
-            fail(f"vendored engine file drifted: {name}")
+    # fork 直连完整性：禁止任何 vendored 引擎路径残留；路由必须指向 fork 入口脚本
+    stale = []
+    skip_dirs = {".git", "node_modules", ".venv", "__pycache__", "jy_headless"}
+    for path in ROOT.rglob("*"):
+        if not path.is_file() or skip_dirs.intersection(path.parts):
+            continue
+        if path.name in {"validate_distribution.py", "test_distribution.py", "AGENTS.md"}:
+            continue
+        try:
+            text = path.read_text(encoding="utf-8", errors="ignore")
+        except OSError:
+            continue
+        for pattern in ("scripts/jy_headless", "VENDOR.json", "vendor_engine"):
+            if pattern in text:
+                stale.append(f"{path.relative_to(ROOT)}: {pattern}")
+                break
+    if stale:
+        fail("stale vendored-engine references: " + "; ".join(sorted(set(stale))))
+
+    router = (ROOT / "skills/jianying-use/SKILL.md").read_text(encoding="utf-8")
+    if "skills/yichen-jianying-edit/scripts/headless_draft.py" not in router:
+        fail("router must reference the fork entry script headless_draft.py")
 
     if "SessionStart" not in load_json("hooks/hooks.json").get("hooks", {}):
         fail("hooks.json missing SessionStart")
 
     print(f"validated {PLUGIN_ID} {version}: "
-          f"{len(list((ROOT / 'skills').iterdir()))} skills, engine vendored, hooks wired")
+          f"{len(list((ROOT / 'skills').iterdir()))} skills, fork-direct, hooks wired")
     return 0
 
 

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import shutil
 import sys
 from pathlib import Path
@@ -13,28 +14,31 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> int:
     lines: list[str] = []
 
-    engine = ROOT / "scripts" / "jy_headless" / "cli.py"
-    vendor = ROOT / "scripts" / "VENDOR.json"
-    lines.append("引擎: 就绪" if engine.is_file() and vendor.is_file()
-                 else "引擎: 缺失——运行 scripts/vendor_engine.py update")
-    if vendor.is_file():
-        try:
-            m = json.loads(vendor.read_text(encoding="utf-8"))
-            lines.append(f"引擎版本: {m.get('ref')} @ {m.get('resolved_sha', '')[:12]}")
-        except Exception:
-            pass
+    env = os.environ.get("JIANYING_HEADLESS_ROOT", "")
+    default = Path.home() / "workspaces" / "workspace-partme-ai" / "jianying-headless"
+    if env and Path(env).is_dir():
+        lines.append(f"fork 检出: {env}")
+    elif default.is_dir():
+        lines.append(f"fork 检出: {default}（建议 export JIANYING_HEADLESS_ROOT 指向它）")
+    else:
+        lines.append("fork 检出: 未找到——git clone https://github.com/partme-ai/jianying-headless"
+                     " 并 export JIANYING_HEADLESS_ROOT=<绝对路径>（插件不带引擎，直连用户 fork）")
+
+    lines.append("预检命令: python3 \"$JIANYING_HEADLESS_ROOT/skills/yichen-jianying-edit/"
+                 "scripts/headless_draft.py\" doctor")
 
     home = Path.home()
     roots = [
+        home / "Movies" / "JianyingPro" / "User Data" / "Projects" / "com.lemon.lvpro",
         home / "Movies" / "JianyingPro" / "User Data" / "Projects" / "com.lveditor.draft",
-        home / "AppData" / "Local" / "JianyingPro" / "User Data" / "Projects" / "com.lveditor.draft",
+        home / "AppData" / "Local" / "JianyingPro" / "User Data" / "Projects" / "com.lemon.lvpro",
     ]
     found = next((r for r in roots if r.is_dir()), None)
     lines.append(f"剪映草稿根: {found}" if found
-                 else "剪映草稿根: 未找到——需安装并启动一次剪映专业版（com.lemon.lvpro）")
+                 else "剪映草稿根: 未找到——需安装并启动一次剪映专业版（11.4.x 钉扎，com.lemon.lvpro）")
 
     ff = shutil.which("ffmpeg")
-    lines.append(f"ffmpeg: {ff or '未找到（素材探测/合成需要）'}")
+    lines.append(f"ffmpeg: {ff or '未找到（素材探测需要）'}")
 
     try:
         sys.stdin.read()

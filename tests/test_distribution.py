@@ -22,9 +22,16 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual(d["name"], "jianying-edit")
         self.assertEqual(d["repository"], "https://github.com/partme-ai/partme-jianying-plugin")
 
-    def test_vendor_manifest_intact(self) -> None:
-        m = json.loads((ROOT / "scripts/VENDOR.json").read_text())
-        self.assertEqual(m["repo"], "https://github.com/partme-ai/jy-headless.git")
+    def test_fork_direct_no_vendored_engine(self) -> None:
+        for rel in ("scripts/VENDOR.json", "scripts/vendor_engine.py", "scripts/jy_headless"):
+            self.assertFalse((ROOT / rel).exists(), f"parallel engine must stay removed: {rel}")
+        router = (ROOT / "skills/jianying-use/SKILL.md").read_text(encoding="utf-8")
+        self.assertIn("headless_draft.py", router)
+        self.assertIn("partme-ai/jianying-headless", router)
+
+    def test_zcode_userconfig_is_record(self) -> None:
+        d = json.loads((ROOT / ".zcode-plugin/plugin.json").read_text())
+        self.assertIsInstance(d.get("userConfig"), dict)
 
     def test_kimi_session_start_preloads_router(self) -> None:
         d = json.loads((ROOT / "kimi.plugin.json").read_text())

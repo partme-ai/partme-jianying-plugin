@@ -5,11 +5,11 @@
     "en": "JianYing Edit",
     "zh-CN": "剪映剪辑"
   },
-  "version": "0.2.0",
-  "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — multi-track video/text/audio, non-destructive, verified.",
+  "version": "0.7.0",
+  "description": "Native, fully editable JianYing Pro drafts from jy14-headless plans or compiled edit-plans, driven through the user's jianying-headless fork unmodified: multi-track video/text/audio with transitions, keyframes, masks, narration condensing, and native MP4 export. Pinned to macOS JianYing 11.4.x.",
   "description_i18n": {
-    "en": "JianYing Pro draft generation from edit-plan JSON: multi-track video/text/audio, non-destructive, verified.",
-    "zh-CN": "剪辑计划 JSON 一键生成剪映原生草稿：多轨视频/文字/音频、非破坏式生成、交付前校验。"
+    "en": "Native JianYing Pro drafts from jy14-headless plans or compiled edit-plans via the unmodified jianying-headless fork: multi-track video/text/audio, transitions/keyframes/masks, narration condensing, native export.",
+    "zh-CN": "通过未改动的 jianying-headless fork，把 jy14 计划或编译后的口播计划一键发布为剪映原生草稿：多轨视频/文字/音频、转场/关键帧/蒙版、口播精剪与原生导出。"
   },
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
@@ -31,7 +31,7 @@
     "JY_DRAFT_ROOT": {
       "type": "directory",
       "title": "剪映草稿根目录",
-      "description": "留空自动探测（macOS/Windows 官方路径）；自定义安装位置时手动指定"
+      "description": "一般留空：由引擎 doctor 探测剪映默认草稿根；剪映装在非默认位置时手动指定"
     }
   }
 }

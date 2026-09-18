@@ -1,37 +1,36 @@
 ---
 name: jianying-narration
-description: "口播精剪流水线: long-form talking-head footage -> ASR transcript -> unit-level keep/drop decisions -> jianying-plan/v1 -> native JianYing draft. The fixed-format account pipeline close-out, adapted from the validated koubo-condense flow."
+description: "口播长视频精剪流水线: ASR (asr_once) -> unit-level keep/protect decisions -> edit-plan compile -> from-compiled -> build -> publish -> verify -> 原生剪映草稿. Millisecond-precision cuts from word-level timestamps; human fine-tunes in 剪映."
 ---
 
 # JianYing Narration（口播精剪）
 
-长口播 → 精剪版剪映草稿。全链已在 koubo-condense-demo 验证（227s→112s，49%）。
-
-## 前置
-
-- 口播源视频（用户提供；本机无则先 TTS 合成测试素材）
-- video-agent-kit 官方 ASR/TTS 通道（MCP 面内免 key）
+长口播 → 精剪版原生草稿。与 `jianying-edit` 的关系：本技能是**上游**——
+它产出 edit-plan（keeps/protect/subtitles），交给 jianying-edit 的编译构建链。
 
 ## 流程
 
-1. **转写**：`speech_transcribe(input_path=<口播>, output_json=out/transcript.json)`。
-   空转录合法（无语音素材不适用本技能）。
-2. **建索引**：`condense_index(video_path, transcript_path, silence_db=-45)`。
-   合成/低噪音频的 auto 阈值会误判（threshold_too_high）——手动压到 -45 或更低，
-   直到 verdict=plausible。产出 47 类语义单元表。
-3. **选段决策**（你来做）：读单元表，按「钩子→框架→三段展开→总结→CTA」保留
-   干货链，弃问候/跑题/碎片/重复。**连续 run 优先**（相邻单元不产生跳切），
-   目标时长决定取舍。写出 keep 列表。
-4. **condense_plan**：`condense_plan(index_path, keep=[...], tighten_pauses=true,
-   drop_fillers="hard")` → 13 clip 级计划 + 边界吸附报告。
-5. **QC + 裁决**：`condense_render` 出 ffmpeg 预览 → `condense_qc`（0 错基线；
-   连续性警告逐条裁决写入 out/condense_verify.md）。
-6. **转剪映草稿**：读 condense_plan.json 的 clips（start/end 秒）转
-   `jianying-plan/v1`（video 轨顺序拼接）→ `jy_headless generate` → 原生草稿。
-7. **交付**：草稿名 + 前后时长对比；用户在剪映里微调后导出。
+1. **ASR**：`asr_once.py run --source <口播> --ledger WORK/asr-ledger`
+   （豆包执行器经 `YICHEN_ASR_EXECUTOR`；一次请求按素材内容 hash 记账，
+   完成结果复用，不明状态阻止新提交——不用 force 绕过）。
+2. **逐字稿分析**（你来做）：按语义标 keeps（含 protect 有效发音区间）、
+   subtitles（一条可跨多段）、decisions（DELETE 区间与理由）。
+3. **compile**：`edit_plan.py compile`（口播计划 → 编译结果，
+   整帧区间 + 字幕余量 + 相邻去重）。
+4. **render-audio**（可选）：编译结果的音频渲染。
+5. **from-compiled → build → verify-build → publish → verify**
+   （见 `jianying-harness` 的命令面）。
+6. **交付**：草稿名 + 前后时长对比；用户在剪映内微调（毫秒级切点支持
+   丝滑手工调整）并导出。
 
-## Never do
+## 决策纪律
 
-- Never 凭计划时长放置字幕/音轨——用 ffprobe 实测。
-- Never 把「轮询超时/部分失败」当完成；逐单元核对 QC 警告。
-- Never 伪造转录内容（ASR 不可用时如实报告并停止）。
+- 保留完整语义，删气口与跑题；不删难以确认的数字、产品名或核心判断。
+- `protect` 防止切进有效发音；编译器不自动延长保护区间——无解时调边界。
+- 一条字幕可跨多个保留片段，文字仅包含保留语义。
+- 音效事件落删除区间默认报错；确认应随下一段开始时 `"snap": "next"`。
+
+## 成本提示
+
+- ASR 按调用量计费（豆包/火山）；已有同源逐词稿时直接使用，不重复转写。
+- AI/LLM 的选段决策是本流程的智力环节——逐字稿读两遍再下刀，比返工便宜。

@@ -1,7 +1,7 @@
 {
   "name": "jianying-edit",
-  "version": "0.2.0",
-  "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — multi-track video/text/audio, non-destructive, verified.",
+  "version": "0.7.0+codex.20260919",
+  "description": "Native, fully editable JianYing Pro drafts from jy14-headless plans or compiled edit-plans, driven through the user's jianying-headless fork unmodified: multi-track video/text/audio with transitions, keyframes, masks, narration condensing, and native MP4 export. Pinned to macOS JianYing 11.4.x.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "JianYing Edit",
     "shortDescription": "Edit-plan JSON to native JianYing drafts",
-    "longDescription": "Generate native, fully editable JianYing Pro drafts from edit-plan JSON through a deterministic headless engine: multi-track video/text/audio assembly, non-destructive generation with replace gates, draft-root detection on macOS and Windows, and verbatim-vendored engine with digest manifest. Drafts open in 剪映 as normal projects for fine-tuning and export.",
+    "longDescription": "Generate native, fully editable JianYing Pro drafts from jy14-headless plans or compiled edit-plans, driven through the user's jianying-headless fork unmodified: multi-track video/text/audio assembly with transitions, keyframes, masks and narration condensing, hash-pinned engine components, build/verify/publish discipline, and native MP4 export. Drafts open in 剪映 as normal projects for fine-tuning and in-app export.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "category": "Creativity",
     "capabilities": [

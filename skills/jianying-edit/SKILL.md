@@ -1,85 +1,55 @@
 ---
 name: jianying-edit
-description: "Turn an edit-plan JSON (jianying-plan/v1: video/text/audio tracks with per-clip material, start, duration, volume, speed) into a native, fully editable JianYing Pro draft via the vendored jy-headless engine. Deterministic, offline, non-destructive to existing drafts."
+description: "Turn a jy14-headless-plan/v1 into a native, fully editable JianYing Pro draft via the jianying-headless engine: build -> verify-build -> publish -> verify. Also the edit-plan (口播 keeps/protect) compile path and copy-based editing of existing drafts. Non-destructive; draft name uniqueness enforced."
 ---
 
-# JianYing Edit（剪辑计划 → 原生草稿）
+# JianYing Edit（计划 → 原生草稿）
 
-Deterministic engine: `scripts/jy_headless/cli.py`（vendored from
-partme-ai/jy-headless, Apache-2.0）. You design the edit plan; the engine
-generates the native draft; 剪映 opens it as a normal editable project.
-
-## Edit-plan contract (`jianying-plan/v1`)
-
-```json
-{
-  "schema": "jianying-plan/v1",
-  "draft": {"name": "episode-01", "width": 1280, "height": 720, "fps": 24},
-  "tracks": [
-    {"type": "video", "clips": [
-      {"material": "generated/shot-01.mp4", "start_us": 0,
-       "duration_us": 6000000, "volume": 1.0, "speed": 1.0}
-    ]},
-    {"type": "text", "clips": [
-      {"text": "解说字幕", "start_us": 500000, "duration_us": 3000000,
-       "size": 8.0, "color": [1.0, 1.0, 1.0]}
-    ]},
-    {"type": "audio", "clips": [
-      {"material": "narration.mp3", "start_us": 0,
-       "duration_us": 6000000, "volume": 1.0}
-    ]}
-  ]
-}
-```
-
-Rules: `start_us`/`duration_us` are integers in microseconds; every `material`
-must be an existing local media file; draft name must be unique in the draft
-root unless replacement is explicitly accepted; video and text/audio tracks
-are assembled bottom-up in the listed order.
-
-v0.2 optional fields: video clips accept `transition_out` and `keyframes`
-(see `jianying-transitions` / `jianying-motion`); text clips accept full
-TextStyle fields (bold/italic/underline/align/letter_spacing — see
-`jianying-subtitles`). Material durations must be ffprobe-measured, not
-planned values.
-
-## Workflow
-
-1. **Design the edit plan** from the user's brief or our pipeline artifacts
-   (shot table from `blender-previs`, generated clips from
-   `minimax-video-generation`, narration from the speech layer). Plan the
-   multi-track layout: main video track first, then text/subtitle, then audio.
-2. **Validate materials**: every referenced file must exist and be a real
-   media file; probe durations with `ffprobe` so text/audio placement matches
-   actual clip lengths instead of planned lengths.
-3. **Write the plan** as `plan.json` following the contract, then:
+引擎在 fork 检出内（见 `jianying-harness` 的命令面与环境）。你设计计划；
+引擎编译时间映射并无界面构建原生草稿。所有命令以绝对路径调用：
 
 ```bash
-python3 "${CLAUDE_PLUGIN_ROOT}/scripts/jy_headless/cli.py" generate \
-  --plan plan.json
+HD="$JIANYING_HEADLESS_ROOT/skills/yichen-jianying-edit/scripts/headless_draft.py"
 ```
 
-4. **Verify**: `verify --draft-dir <输出目录>` parses the generated
-   draft_content.json; report track/segment counts.
-5. **Deliver**: the draft name and root — the user opens 剪映专业版 and the
-   draft appears in the start page, fully editable (multi-track, speed,
-   volume, text styles are all native).
+## 两条入口
 
-## Iteration
+- **直接写计划**（多轨视频/字幕/音频/滤镜/特效）→ 写 `jy14-headless-plan/v1`
+  （字段手册见 [references/plan-format.md](references/plan-format.md)，
+  亦可读 fork 内 `references/plan-format.md` 原文）→ `build` 链。
+- **口播精剪**（keeps/protect/subtitles）→ 写 `jianying-edit-plan/v1` →
+  `edit_plan.py compile` → `from-compiled` → `build` 链（见 `jianying-narration`）。
 
-A rejected edit is a plan change: adjust `plan.json` (or the upstream shot
-table), regenerate with a new draft name (keep the rejected draft for
-comparison unless the user asks to clean up). Never overwrite a draft the user
-may have edited in 剪映: `--no-replace` makes the engine fail instead of
-replacing.
+## 工作流（直接写计划）
+
+1. **探测**：素材 ffprobe 实测时长（`jianying-inspect`）；`$HD doctor`
+   确认草稿根与运行时。计划里的 `duration_us` 用实测值，不用设计值。
+2. **写计划**：主视频轨必须是 `tracks[0]` 且首段从 0 起连续无黑场（间隙放
+   画中画轨）；fps ∈ {24,25,30,50,60}；草稿名为可见单层目录名。
+3. **build**：`$HD build --plan WORK/plan.json --out WORK/build`（纯产物，
+   不写剪映）。
+4. **verify-build**：`$HD verify-build --build WORK/build [--report WORK/verify-build.json]`。
+5. **publish**（剪映完全关闭后）：`$HD publish --build WORK/build --audit WORK/audit`。
+   中断后用 `resume-publish`（幂等）续做。
+6. **verify**：`$HD verify --build WORK/build`（已发布草稿的回读核验）。
+   一步到位可用 `$HD create --plan WORK/plan.json --work WORK/run`（= build+publish）。
+7. **交付**：用户在剪映开始页打开草稿检查画面/字幕/音量/切口。
+
+## 改已有草稿（独立副本）
+
+`$HD edit inspect --draft <草稿目录> --out WORK/inspect.json` 先看结构；
+再按 fork 的 `edit-existing-macos.md` 用 `edit build/publish` 链在**副本**上改，
+原草稿永不被触碰。复合片段（嵌套时间线）走 `edit` 入口，不走主 `build`。
+
+## 原生导出
+
+`$HD export --build WORK/build --out WORK/export` 产出 `render.mp4`
+（`--bitrate` 默认 4M、`--timeout` 默认 600s）。仅吃**已验证 build 快照**；
+会员特效被隔离校验拦下时如实报告，改用普通资源或让用户在剪映内导出。
 
 ## Never do
 
-- Never touch, move, or delete an existing draft in the root; generation
-  creates new drafts only.
-- Never reference materials that do not exist, and never approximate a brand
-  logo, UI, or identity asset inside generated text or media.
-- Never promise automated MP4 export: the draft opens in 剪映, and the user
-  exports there (headless export automation is a future engine capability).
-- Never proceed past material validation with placeholder media the user has
-  not approved.
+- Never 引用不存在的素材，或用计划时长代替 ffprobe 实测值。
+- Never 覆盖用户可能编辑过的同名草稿；publish 冲突时换名或走 resume-publish。
+- Never 绕过引擎的哈希钉扎与资源目录校验（改 fork、伪造 pin、下载未采集资源）。
+- Never 把会员标记当授权；商用许可边界见 `jianying-setup`。
