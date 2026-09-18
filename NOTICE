@@ -1,0 +1,9 @@
+JianYing Edit (partme-jianying-plugin)
+Copyright 2026 PartMe.AI
+
+Engine vendored from partme-ai/jy-headless v0.1.0 (Apache-2.0), which is built
+on pyJianYingDraft 0.3.0 (Apache-2.0, Copyright GuvaI). Methodology reference:
+mcncarl/yichen-skills (yichen-jianying-edit) and mcncarl/jianying-headless
+(private preview, Personal Learning and Non-Commercial License) — used as
+design reference only; no source code or text copied. JianYing/剪映/CapCut are
+trademarks of their respective owners.

@@ -1,0 +1,35 @@
+{
+  "name": "jianying-edit",
+  "version": "0.1.0",
+  "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — video/text/audio tracks, non-destructive generation, verified output.",
+  "author": {
+    "name": "Full Stack Skills / PartMe.AI"
+  },
+  "homepage": "https://github.com/partme-ai/partme-jianying-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "jianying",
+    "capcut",
+    "video-editing"
+  ],
+  "interface": {
+    "displayName": "JianYing Edit",
+    "shortDescription": "Edit-plan JSON to native JianYing drafts",
+    "longDescription": "Turn edit-plan JSON into native JianYing Pro drafts via the vendored headless engine: multi-track video/text/audio, non-destructive generation, verified output.",
+    "developerName": "Full Stack Skills / PartMe.AI",
+    "websiteURL": "https://github.com/partme-ai/partme-jianying-plugin"
+  },
+  "skills": "./skills/",
+  "commands": "./commands/",
+  "sessionStart": {
+    "skill": "jianying-use"
+  },
+  "skillInstructions": "加载本插件技能时：生成草稿前先跑 detect 确认剪映环境；已有草稿永不覆盖。",
+  "hooks": [
+    {
+      "event": "SessionStart",
+      "command": "python3 ./hooks/env_check.py",
+      "timeout": 30
+    }
+  ]
+}

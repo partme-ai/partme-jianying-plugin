@@ -1,0 +1,45 @@
+{
+  "name": "jianying-edit",
+  "version": "0.1.0",
+  "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — video/text/audio tracks, non-destructive generation, verified output.",
+  "author": {
+    "name": "Full Stack Skills / PartMe.AI",
+    "url": "https://github.com/partme-ai"
+  },
+  "homepage": "https://github.com/partme-ai/partme-jianying-plugin",
+  "repository": "https://github.com/partme-ai/partme-jianying-plugin",
+  "license": "Apache-2.0",
+  "keywords": [
+    "jianying",
+    "capcut",
+    "video-editing",
+    "draft-generation",
+    "codex"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "JianYing Edit",
+    "shortDescription": "Edit-plan JSON to native JianYing drafts",
+    "longDescription": "Generate native, fully editable JianYing Pro drafts from edit-plan JSON through a deterministic headless engine: multi-track video/text/audio assembly, non-destructive generation with replace gates, draft-root detection on macOS and Windows, and verbatim-vendored engine with digest manifest. Drafts open in 剪映 as normal projects for fine-tuning and export.",
+    "developerName": "Full Stack Skills / PartMe.AI",
+    "category": "Creativity",
+    "capabilities": [
+      "Interactive",
+      "Read",
+      "Write"
+    ],
+    "websiteURL": "https://github.com/partme-ai/partme-jianying-plugin",
+    "privacyPolicyURL": "https://github.com/partme-ai/partme-jianying-plugin/blob/main/PRIVACY.md",
+    "termsOfServiceURL": "https://github.com/partme-ai/partme-jianying-plugin/blob/main/TERMS.md",
+    "defaultPrompt": [
+      "Detect my JianYing environment",
+      "Turn this edit plan into a JianYing draft",
+      "Assemble my episode clips into a JianYing draft"
+    ],
+    "brandColor": "#1E90FF",
+    "composerIcon": "./assets/composer-icon.png",
+    "logo": "./assets/official-logo.png",
+    "logoDark": "./assets/official-logo.png",
+    "screenshots": []
+  }
+}

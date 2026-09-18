@@ -1,0 +1,29 @@
+{
+  "name": "partme-ai-jianying-edit",
+  "interface": {
+    "displayName": "JianYing Edit"
+  },
+  "plugins": [
+    {
+      "name": "jianying-edit",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/partme-ai/partme-jianying-plugin.git",
+        "ref": "main"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "NONE"
+      },
+      "category": "Creativity",
+      "version": "0.1.0",
+      "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — video/text/audio tracks, non-destructive generation, verified output.",
+      "icon": "https://raw.githubusercontent.com/partme-ai/partme-jianying-plugin/main/assets/official-logo.png",
+      "interface": {
+        "displayName": "JianYing Edit",
+        "shortDescription": "Edit-plan JSON to native JianYing drafts",
+        "logo": "https://raw.githubusercontent.com/partme-ai/partme-jianying-plugin/main/assets/official-logo.png"
+      }
+    }
+  ]
+}

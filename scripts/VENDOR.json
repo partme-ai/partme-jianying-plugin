@@ -1,0 +1,11 @@
+{
+  "repo": "https://github.com/partme-ai/jy-headless.git",
+  "ref": "v0.1.0",
+  "resolved_sha": "2574ed107ea73260b6accdae6acb572b3d2e2f2a",
+  "files": {
+    "__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "cli.py": "24b02b49c779404b058af8c7c04d20d5c4f1f9756e226938b270e52cd4aa2205",
+    "detect.py": "9fa351e1312d08754c608564f099752f68aafecd54770e9092ce34e9a8e0fd6f",
+    "generate.py": "66d07b91fb231bb3add73ce96e8b4a8305d8f47ee4e8b102f70ea09230308d01"
+  }
+}
