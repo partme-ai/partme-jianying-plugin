@@ -16,20 +16,18 @@ Status: **v0.6.0**（fork 直连架构：插件只带技能/命令/钩子，引�
 5. 构建链：`headless_draft.py build → verify-build → publish（剪映关闭）→ verify`
 6. 打开剪映开始页该草稿继续编辑；或 `headless_draft.py export` 直接出 render.mp4
 
-## 内置引擎 CLI（jycut，v0.8.0 起）
+## 内置引擎（v0.9.0 起：pyJianYingDraft 直驱 + jycut 快路径）
 
-`cli/` 内置 Apache-2.0 的 Rust 本地引擎 `jycut`：`jycut-plan/v1` 计划 →
-构建 → 校验 → 发布进剪映草稿库，单二进制、零 Python、零账号（三源整合：
-pyJianYingDraft Apache 骨架资产 + capcut-cli MIT 写盘/注册纪律 + NC fork 仅契约事实）。
+- **主力引擎：vendored [pyJianYingDraft](https://github.com/GuanYixuan/pyJianYingDraft)**（Apache-2.0，`scripts/vendor/` 逐文件 SHA-256 钉扎）——技能家族直驱其完整 API：多轨、453 转场目录、关键帧、6 形蒙版、样式文本/描边/背景、入场出场动画、1052 滤镜与画面特效元数据、SRT 一键导入。运行器：`scripts/jydraft_run.py`；环境自检：`scripts/jydraft_check.py`。
+- **快路径：内置 Rust CLI `cli/`（jycut）**——`jycut-plan/v1` 确定性构建，自带 verify 门禁。
+- **专业档（可选）：fork 检出**（`JIANYING_HEADLESS_ROOT`，NC 许可零改动驱动）——仅原生 MP4 导出、已有草稿编辑、ASR 记账。
 
 ```bash
-cd cli && cargo build --release
-target/release/jycut build plan.json --out draft-v1   # 自带 verify 门禁
-target/release/jycut publish draft-v1                  # 拷入草稿库并注册
+python3 scripts/jydraft_run.py gen.py        # 计划脚本 → 原生草稿
+cd cli && cargo build --release && target/release/jycut build plan.json --out d1
 ```
 
-细节与契约见 [cli/README.md](cli/README.md)。fork 直连路径（`JIANYING_HEADLESS_ROOT`）
-保留为专业档（原生导出/已有草稿编辑/ASR 记账）。
+细节见 [cli/README.md](cli/README.md) 与 `skills/jianying-draft`。
 
 ## 三平台安装
 

@@ -1,53 +1,44 @@
 ---
 name: jianying-export-prep
-description: "Pre-export checklist plus native export for a verified jianying-headless build: verify-build, member-effect isolation, headless_draft.py export to render.mp4, and the in-app export fallback."
+description: "Pre-export checklist for a generated JianYing draft: JSON integrity, material availability, subtitle/audio sanity, cold-reopen advice, and honest export boundaries (in-app by the user; pyJianYingDraft's UIA export is Windows-only on legacy JianYing)."
 ---
 
-# JianYing Export Prep（导出前检查 + 原生导出）
+# JianYing Export Prep（导出前检查清单）
 
-## 1. 构建完整性（全部只读）
+## 1. 草稿完整性（只读）
 
-```bash
-HD="$JIANYING_HEADLESS_ROOT/skills/yichen-jianying-edit/scripts/headless_draft.py"
-python3 "$HD" verify-build --build WORK/build --report WORK/vb.json
-```
-
-- 结构核验通过、轨道/段数与计划一致；发布后跑 `verify --build WORK/build`
-  做活体回读。
+- `draft_content.json` + `draft_meta_info.json` 可解析；轨道/段数与设计一致。
+- `jycut verify <草稿目录>`：引用完整、主轨连续、时长一致。
 
 ## 2. 素材可用性
 
-- 遍历计划每个 `source`：文件存在、可读、非空。
+- 遍历脚本里每个素材路径：存在、可读、非空。
 - 素材在**生成后被移动**是头号翻车原因——剪映打开会标红丢失素材。
+  pyJianYingDraft 不复制素材文件（引用绝对路径），移动素材 = 断链。
 
 ## 3. 内容核对
 
-- 总时长 = 主轨段时长之和（主轨连续，无黑场）。
-- 字幕无重叠、未越安全区；音频解说无重叠；转场只在章节边界。
+- 总时长 = 主轨段时长之和（主轨连续无黑场）。
+- 字幕无重叠、未越安全区；解说无重叠；BGM 铺满；转场只在章节边界。
+- 首帧不是黑场/空镜头（开始页封面观感）。
 
-## 4. 原生导出（可选，无需打开剪映）
+## 4. 导出边界（如实）
 
-```bash
-python3 "$HD" export --build WORK/build --out WORK/export \
-  [--bitrate 4000000] [--timeout 600]
-```
-
-产出 `WORK/export/render.mp4`。纪律：
-
-- 只吃**已 verify 的 build 快照**，不是活体编辑器状态——先 verify 再导出。
-- **会员特效隔离**：计划含会员标记资源时导出被拦，如实报告——改用已采集的
-  普通资源，或让用户在剪映内导出（会员账号下导出是用户自己的授权行为）。
-- 导出超时先降 `--bitrate` 或分段，不要盲目加大 `--timeout`。
+- **默认出口：用户在剪映内导出**（分辨率/帧率/码率自选）。
+- pyJianYingDraft 自带的 UIA 自动导出**仅 Windows + 剪映 ≤6.8**（新版剪映
+  隐藏了控件树）；macOS 无自动化导出。
+- 需要无人值守出 MP4 的专业路径 = fork 检出的原生导出（`jianying-harness`，
+  NC 许可边界 + 会员特效隔离照旧）。
 
 ## 5. 交付说明模板
 
 ```text
-草稿：<名称>（<时长>秒，<轨道数>轨）
-已发布到剪映开始页。render.mp4 位于 WORK/export/（码率 <b>）。
-建议在剪映里通览一遍：字幕对齐、音量层次、章节转场。
+草稿：<名称>（<时长>秒，<轨道数>轨），已写入 <草稿根>。
+建议：打开后先通览一遍，确认字幕与语音对齐、切口与转场符合预期，
+再在剪映内设置导出参数（分辨率/帧率/码率）。
 ```
 
 ## Never do
 
-- Never 跳过 verify-build 直接导出（export 会拒绝未验证快照）。
-- Never 声称已绕过会员隔离导出会员效果；隔离是授权边界不是故障。
+- Never 声称"已导出 MP4"（默认导出动作在剪映里由用户完成）。
+- Never 跳过素材存在性检查（素材丢失是用户打开后才发现的头号问题）。

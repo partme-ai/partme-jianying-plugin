@@ -78,7 +78,7 @@ def main() -> int:
             text = path.read_text(encoding="utf-8", errors="ignore")
         except OSError:
             continue
-        for pattern in ("scripts/jy_headless", "VENDOR.json", "vendor_engine"):
+        for pattern in ("scripts/jy_headless", "scripts/VENDOR.json", "vendor_engine"):
             if pattern in text:
                 stale.append(f"{path.relative_to(ROOT)}: {pattern}")
                 break
@@ -86,14 +86,31 @@ def main() -> int:
         fail("stale vendored-engine references: " + "; ".join(sorted(set(stale))))
 
     router = (ROOT / "skills/jianying-use/SKILL.md").read_text(encoding="utf-8")
-    if "skills/yichen-jianying-edit/scripts/headless_draft.py" not in router:
-        fail("router must reference the fork entry script headless_draft.py")
+    if "pyJianYingDraft" not in router:
+        fail("router must reference the vendored pyJianYingDraft engine")
+    if "jianying-headless" not in router:
+        fail("router must reference the fork pro-tier checkout")
+
+    # vendored pyJianYingDraft 完整性（Apache-2.0，逐文件 SHA-256 钉扎）
+    import hashlib
+
+    vendor_root = ROOT / "scripts" / "vendor" / "pyJianYingDraft"
+    vendor_manifest = load_json("scripts/vendor/pyJianYingDraft/VENDOR.json")
+    if vendor_manifest.get("license") != "Apache-2.0 (LICENSE inside this directory)":
+        fail("vendored pyJianYingDraft license marker changed")
+    for name, digest in vendor_manifest["files"].items():
+        f = vendor_root / name
+        if not f.is_file():
+            fail(f"vendored pyJianYingDraft file missing: {name}")
+        if hashlib.sha256(f.read_bytes()).hexdigest() != digest:
+            fail(f"vendored pyJianYingDraft file drifted: {name}")
 
     if "SessionStart" not in load_json("hooks/hooks.json").get("hooks", {}):
         fail("hooks.json missing SessionStart")
 
     print(f"validated {PLUGIN_ID} {version}: "
-          f"{len(list((ROOT / 'skills').iterdir()))} skills, fork-direct, hooks wired")
+          f"{len(list((ROOT / 'skills').iterdir()))} skills, pyJianYingDraft vendored, "
+          f"hooks wired")
     return 0
 
 

@@ -1,9 +1,14 @@
 ---
 name: jianying-harness
-description: "Deep reference for the jianying-headless engine CLI: doctor / edit_plan compile+render-audio / asr_once / headless_draft from-compiled+build+publish+verify / resume-publish, the jy14-headless-plan/v1 contract, and known failure modes. Use when wiring, debugging, or extending automation flows."
+description: "OPTIONAL pro-tier reference for the user's jianying-headless fork checkout (NC license): doctor / edit_plan compile+render-audio / asr_once / headless_draft from-compiled+build+publish+verify / resume-publish, the jy14-headless-plan/v1 contract, and known failure modes. Use when wiring, debugging, or extending automation flows."
 ---
 
-# JianYing Harness（引擎 CLI 全参考）
+# JianYing Harness（fork 专业档 CLI 全参考——可选）
+
+> **定位**：普通生成不需要本技能（走 vendored pyJianYingDraft，见
+> `jianying-edit`）。本参考只在需要 fork 独有能力时使用：原生 MP4 导出、
+> 已有草稿编辑（独立副本）、ASR 记账。引擎是用户自己的 fork 检出
+> （Personal Learning and Non-Commercial，零改动驱动）。
 
 引擎位置：`$JIANYING_HEADLESS_ROOT`。Skill 入口脚本在其
 `skills/yichen-jianying-edit/scripts/`；核心代码在其 `engine/`。

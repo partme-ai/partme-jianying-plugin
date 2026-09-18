@@ -22,12 +22,15 @@ class DistributionTests(unittest.TestCase):
         self.assertEqual(d["name"], "jianying-edit")
         self.assertEqual(d["repository"], "https://github.com/partme-ai/partme-jianying-plugin")
 
-    def test_fork_direct_no_vendored_engine(self) -> None:
+    def test_engine_tiers_wireup(self) -> None:
         for rel in ("scripts/VENDOR.json", "scripts/vendor_engine.py", "scripts/jy_headless"):
             self.assertFalse((ROOT / rel).exists(), f"parallel engine must stay removed: {rel}")
+        for rel in ("scripts/vendor/pyJianYingDraft/VENDOR.json",
+                    "scripts/jydraft_run.py", "scripts/jydraft_check.py"):
+            self.assertTrue((ROOT / rel).is_file(), f"missing engine artifact: {rel}")
         router = (ROOT / "skills/jianying-use/SKILL.md").read_text(encoding="utf-8")
-        self.assertIn("headless_draft.py", router)
-        self.assertIn("partme-ai/jianying-headless", router)
+        self.assertIn("pyJianYingDraft", router)
+        self.assertIn("jianying-headless", router)
 
     def test_zcode_userconfig_is_record(self) -> None:
         d = json.loads((ROOT / ".zcode-plugin/plugin.json").read_text())

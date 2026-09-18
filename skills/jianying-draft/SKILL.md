@@ -1,75 +1,88 @@
 ---
 name: jianying-draft
-description: "Generate JianYing Pro drafts directly with pyJianYingDraft: DraftFolder/ScriptFile/TrackSpec/VideoSegment/TextSegment/AudioSegment API cookbook, draft_content.json principles, version sensitivity, and offline draft generation. Use when the edit-plan abstraction does not fit and raw library control is needed."
+description: "pyJianYingDraft API cookbook for the vendored engine: DraftFolder/ScriptFile/TrackSpec/segments constructors with exact signatures, transitions (453-name TransitionType), keyframes, masks, styled text (TextStyle/TextBorder/TextShadow/TextBackground), animations, filters/effects, SRT import. The reference every generation script is written from."
 ---
 
-# JianYing Draft（pyJianYingDraft 直接生成）
+# JianYing Draft（pyJianYingDraft API 手册）
 
-当剪辑计划抽象（`jianying-edit`）不够用时，直接用
-[pyJianYingDraft](https://github.com/GuvaI/pyJianYingDraft) 0.3.0（Apache-2.0）
-生成草稿。原理：剪映草稿是 JSON（`draft_content.json` + `draft_meta_info.json`），
-其余文件打开剪映后会自动补全。
+剪映草稿 = JSON（`draft_content.json` + `draft_meta_info.json`），本引擎
+（插件 vendored，Apache-2.0）从内嵌骨架从零生成，无需用户模板。以下签名
+全部按 vendor 版源码核实。
 
-> **fork 直连语境**：`jianying-headless` 引擎本身就是这一层库的封装。
-> 优先走 `jianying-edit` 的计划链（build/publish 有校验与审计）；本页的
-> 直接库调用仅用于 fork 计划字段确实覆盖不到的实验场景，且同样遵守
-> "独立副本、不碰已有草稿"纪律。直接库调用绕过引擎的哈希钉扎校验——
-> 交付前必须在剪映里人工验收，冷重开回读。
-
-## 安装
-
-```bash
-pip install pyJianYingDraft pymediainfo
-```
-
-## 最小示例
+## 骨架流程
 
 ```python
-import pyJianYingDraft as draft
-
-folder = draft.DraftFolder("<剪映草稿根目录>")
-script = folder.create_draft("demo", 1280, 720, fps=24, allow_replace=True)
-
-vref = script.append_track(draft.TrackSpec(draft.TrackType.video))
-seg = draft.VideoSegment(
-    draft.VideoMaterial("clip.mp4"),
-    target_timerange=draft.Timerange(start=0, duration=3_000_000),
-    volume=0.8,
-)
-script.add_segment(seg, vref)
-
-tref = script.append_track(draft.TrackSpec(draft.TrackType.text))
-txt = draft.TextSegment("标题", timerange=draft.Timerange(start=200_000, duration=2_000_000),
-                        style=draft.TextStyle(size=8.0, bold=True))
-script.add_segment(txt, tref)
-
-script.dump("<草稿根>/demo/draft_content.json")
+from pyJianYingDraft import DraftFolder, TrackSpec, TrackType
+import os
+os.makedirs("store", exist_ok=True)          # 根目录必须先存在
+script = DraftFolder("store").create_draft("demo", 1920, 1080, fps=30,
+                                           allow_replace=False)
+v = script.append_track(TrackSpec(TrackType.video))   # → TrackRef
+# ... add_segment ...
+script.dump("store/demo/draft_content.json")          # dump 需显式路径
 ```
 
-## API 速查
+- `create_draft` 同名默认报错；`allow_replace=True` 需用户明确同意。
+- `duplicate_as_template(template_name, new_name)` 改已有草稿 = 独立副本。
+- 时间单位全库微秒：`Timerange(start, duration)`。
 
-| 类 | 要点 |
-|---|---|
-| `DraftFolder(root)` | 草稿根；根目录必须已存在（先建目录） |
-| `create_draft(name, w, h, fps, allow_replace)` | 返回 ScriptFile；allow_replace 控制同名 |
-| `TrackSpec(TrackType.video/text/audio, name)` | 配 `append_track` 返回 TrackRef |
-| `VideoMaterial/AudioMaterial(path)` | 本地素材（会被 ffprobe/probe 读取） |
-| `VideoSegment(material, target_timerange, volume, speed)` | `target_timerange=Timerange(start,duration)` 微秒 |
-| `TextSegment(text, timerange, style=TextStyle(...))` | **timerange 是位置/关键字参数，不是 target_timerange** |
-| `seg.add_transition(TransitionType.叠化, duration=500_000)` | 转场（段尾生效） |
-| `seg.add_keyframe(KeyframeProperty.uniform_scale, us, value)` | 关键帧 |
-| `TextStyle(size, color, bold, italic, align, letter_spacing)` | 全字段样式 |
+## 段落构造器（核实签名）
 
-## 版本敏感
+```python
+VideoSegment(material_or_path, target_timerange=Timerange, *,
+             source_timerange=None,   # 截取源内区间
+             speed=None, volume=1.0, change_pitch=False,
+             clip_settings=ClipSettings(...))   # 越界 raise ValueError
+AudioSegment(material_or_path, target_timerange=, *, volume=1.0, speed=...)
+TextSegment(text, timerange=Timerange, style=TextStyle(...),
+            border=TextBorder(...), background=TextBackground(...),
+            shadow=TextShadow(...), clip_settings=ClipSettings(...))
+```
 
-- pyJianYingDraft 0.3.0：类名为 camelCase（`DraftFolder`/`ScriptFile`），
-  轨道操作是 `append_track(TrackSpec)` + `add_segment(seg, track_ref)`。
-- 剪映大版本更新可能改变草稿内部结构——生成前确认引擎声明的兼容版本区间。
-- 新建草稿无需模板；修改已有草稿需先校验来源并做独立副本。
+- `TextSegment` 的时间参数叫 **`timerange`**（VideoSegment 叫
+  `target_timerange`）。
+- 变速代数：`source_timerange` 与 `speed` 同时给 → 覆盖 target 时长；素材
+  越界直接 ValueError——先 ffprobe 实测。
+- `ClipSettings(transform_x=, transform_y=, scale_x=, scale_y=, rotation=, alpha=)`，
+  坐标以半幅计，字幕惯例 `transform_y=-0.8`。
 
-## 常见坑
+## 文本样式
 
-- `TextSegment` 的样式参数叫 `timerange`（VideoSegment 叫 `target_timerange`）。
-- 空集合是 falsy：`editor.strips or editor.sequences` 这类 fallback 会走反。
-- 世界坐标：position 归一化 0-1；放大超 1.15 会露边/变软。
-- 转场作用于**段尾**，且与首尾帧素材一样吃画面时间。
+```python
+TextStyle(size=8.0, bold=False, italic=False, underline=False,
+          color=(1.0, 1.0, 1.0),   # RGB 浮点 0..1
+          align=0,                  # 0 左 1 中 2 右
+          auto_wrapping=True, max_line_width=0.82)
+TextBorder(color=(0,0,0), width=40.0)      # width 默认 40（描边粗细）
+TextShadow(...); TextBackground(color="#RRGGBB", style=1, ...)
+```
+
+## 段上能力（链式）
+
+| 能力 | 调用 | 备注 |
+|---|---|---|
+| 转场 | `seg.add_transition(TransitionType.叠化, duration=500_000)` | 453 个中文名枚举；作用段尾；目录纪律见 `jianying-transitions` |
+| 关键帧 | `seg.add_keyframe(KeyframeProperty.scale_x, 0, 1.0)` | 属性：position_x/y、scale_x/y、rotation、alpha、saturation、contrast、brightness；音频版 `add_keyframe(time_offset, volume)`；线性插值 |
+| 蒙版 | `seg.add_mask(MaskType.圆形, center_x=, center_y=, size=)` | 6 形：线性/镜面/圆形/矩形/爱心/星形 |
+| 滤镜 | `seg.add_filter(FilterType.<名>, intensity=100.0)` | 1052 目录 |
+| 画面特效 | `seg.add_effect(VideoSceneEffectType.<名> \| VideoCharacterEffectType.<名>)` | 1097+240 目录 |
+| 音频特效 | `seg.add_effect(AudioSceneEffectType.<名>)` | 场景音 85 |
+| 入场/出场/循环动画 | `seg.add_animation(IntroType.\|OutroType.\|GroupAnimationType.<名>)` | 文本版 TextIntro/TextOutro/TextLoopAnim；**淡入淡出用动画，不用 alpha 关键帧**（渲染被忽略） |
+| 花字 | `TextSegment.add_effect(effect_id, resource_id)` | 需要 effect_id/resource_id 元数据 |
+
+## SRT 字幕一键导入
+
+```python
+script.import_srt("subs.srt", "字幕轨名",
+                  text_style=TextStyle(size=5, align=1, auto_wrapping=True),
+                  clip_settings=ClipSettings(transform_y=-0.8),
+                  style_reference=可选样式基准段)
+```
+
+## 常见坑（实测）
+
+- 空集合 falsy：`editor.strips or editor.sequences` 类 fallback 会走反。
+- `AudioSegment` 的素材不能含视频轨（ValueError：音频素材不应包含视频轨道）。
+- `allow_replace=False`（默认）下同名 create/duplicate 直接失败——这是
+  非破坏纪律，不要图省事开 replace。
+- 剪映大版本升级可能改草稿内部结构；生成后冷重开回读一次最稳。

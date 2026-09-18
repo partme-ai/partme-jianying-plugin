@@ -1,7 +1,7 @@
 {
   "name": "jianying-edit",
-  "version": "0.8.0+codex.20260918",
-  "description": "Native, fully editable JianYing Pro drafts from jy14-headless plans or compiled edit-plans, driven through the user's jianying-headless fork unmodified: multi-track video/text/audio with transitions, keyframes, masks, narration condensing, and native MP4 export. Pinned to macOS JianYing 11.4.x.",
+  "version": "0.10.0+codex.20260918",
+  "description": "Native, fully editable JianYing drafts via the vendored Apache-2.0 pyJianYingDraft engine plus the built-in Rust jycut CLI: multi-track video/text/audio, the 453-name transition catalog, keyframes, masks, styled text and SRT captions; optional fork pro-tier for native export and existing-draft editing. No account, no upload.",
   "author": {
     "name": "Full Stack Skills / PartMe.AI",
     "url": "https://github.com/partme-ai"
@@ -20,7 +20,7 @@
   "interface": {
     "displayName": "JianYing Edit",
     "shortDescription": "Edit-plan JSON to native JianYing drafts",
-    "longDescription": "Generate native, fully editable JianYing Pro drafts from jy14-headless plans or compiled edit-plans, driven through the user's jianying-headless fork unmodified: multi-track video/text/audio assembly with transitions, keyframes, masks and narration condensing, hash-pinned engine components, build/verify/publish discipline, and native MP4 export. Drafts open in 剪映 as normal projects for fine-tuning and in-app export.",
+    "longDescription": "Native, fully editable JianYing drafts via the vendored Apache-2.0 pyJianYingDraft engine plus the built-in Rust jycut CLI: multi-track video/text/audio, the 453-name transition catalog, keyframes, masks, styled text and SRT captions; optional fork pro-tier for native export and existing-draft editing. No account, no upload. Hash-pinned vendored engine; jycut adds dual-mirror writes, store registration and a verify gate.",
     "developerName": "Full Stack Skills / PartMe.AI",
     "category": "Creativity",
     "capabilities": [

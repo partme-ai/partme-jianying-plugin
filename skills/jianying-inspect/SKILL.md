@@ -1,24 +1,11 @@
 ---
 name: jianying-inspect
-description: "Inspect materials, draft root, and engine health before planning: ffprobe media durations, headless_draft.py doctor, edit-mode inspect of existing drafts. Read-only."
+description: "Inspect materials and drafts before/after generation: ffprobe measured durations, draft JSON structure read-back, and the built-in jycut verify/inspect as lint tooling. Read-only."
 ---
 
 # JianYing Inspect（素材与草稿探测）
 
-计划前必做：**用实测时长，不用计划时长**——生成模型会漂移（白模切点漂移教训）。
-
-```bash
-HD="$JIANYING_HEADLESS_ROOT/skills/yichen-jianying-edit/scripts/headless_draft.py"
-```
-
-## 引擎与草稿根
-
-```bash
-python3 "$HD" doctor
-```
-
-输出运行时（剪映 11.4.x 钉扎）、草稿根路径、资源目录健康度。任何一项异常，
-按 `jianying-setup` 修复后再继续；不要带着坏环境生成。
+计划前必做：**用实测时长，不用设计时长**——生成模型会漂移（白模切点漂移教训）。
 
 ## 素材探测
 
@@ -27,20 +14,25 @@ ffprobe -v error -show_entries format=duration -of csv=p=0 <media>
 ffprobe -v error -select_streams v:0 -show_entries stream=width,height,r_frame_rate -of csv=p=0 <media>
 ```
 
-每个进入计划的 `source` 都要探测：实测时长决定 `duration_us` 与
-`source_start_us` 的合法上限；混合分辨率可同剪映工程但同轨混分辨率会被缩放。
+每个进入脚本的素材都要探测：实测时长决定 `Timerange` 合法上限（越界库会
+ValueError）；同轨混分辨率会被缩放。内置 Rust CLI 亦可：
+`cli/target/release/jycut probe <media>`（同源 ffprobe）。
 
-## 已有草稿探测（独立副本，只读）
+## 草稿根与已有草稿
 
-```bash
-python3 "$HD" edit inspect --draft <草稿目录> --out WORK/inspect.json
-```
-
-读 `WORK/inspect.json` 拿轨道/段结构。计划前检查同名冲突：目标名已存在且用户
-可能编辑过 → 换名并提示；确需覆盖必须用户明说。**绝不修改原草稿目录内文件。**
+- 草稿根：`jydraft_check.py` 的 `draft_roots` 列出路径与存在性。
+- 计划前检查同名冲突：目标名已存在且用户可能编辑过 → 换名并提示；确需覆盖
+  必须用户明说（`create_draft(allow_replace=True)` 是显式门禁）。
+- 读已有草稿结构（只读）：直接读 `draft_content.json` 或
+  `jycut inspect <草稿目录>`。
 
 ## 生成产物核验
 
-- `verify-build --build WORK/build --report WORK/vb.json`：发布前的结构核验。
-- `verify --build WORK/build`：发布后的活体回读。
-- 深度核对段切点（对齐预期时间轴）读 verify 报告/审计 JSON，不在草稿目录里改东西。
+- 读回 `draft_content.json`：轨道/段数与设计一致、`duration` = 各段末端
+  最大值、转场挂在前段 `extra_material_refs`、关键帧按属性成组。
+- `jycut verify <草稿目录>`：引用完整性 + 主轨连续 + 时长一致性 lint。
+
+## Never do
+
+- Never 依据计划时长而非实测值放置后续轨（对齐漂移是字幕错位的头号原因）。
+- Never 修改已有草稿目录里的任何文件。

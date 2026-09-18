@@ -1,37 +1,39 @@
 ---
 name: jianying-setup
-description: "Diagnose and fix the JianYing automation environment: fork checkout (partme-ai/jianying-headless), pinned 剪映专业版 11.4.x runtime, draft root, ASR executor (YICHEN_ASR_EXECUTOR), and ffmpeg. Per-OS guidance, advisory only."
+description: "Diagnose and fix the JianYing automation environment: vendored pyJianYingDraft engine health, pymediainfo + MediaInfo library, ffmpeg/ffprobe, draft root, and the optional fork pro-tier checkout. Advisory per-OS guidance."
 ---
 
 # JianYing Setup（环境诊断与准备）
 
 ## 检查清单（按序）
 
-1. **fork 检出**：`JIANYING_HEADLESS_ROOT` 指向
-   partme-ai/jianying-headless 的本地检出（用户自己的 fork，零改动使用）。
-   未设置时按默认路径探测，都没有则引导：
-   ```bash
-   git clone https://github.com/partme-ai/jianying-headless.git
-   export JIANYING_HEADLESS_ROOT=<检出路径>
-   ```
-2. **剪映专业版 11.4.x**：引擎按精确 runtime profile 钉死（11.4.0/11.4.2，
-   校验 bundle ID `com.lemon.lvpro`、深度签名与 Team ID）。升级到其他版本会被
-   引擎拒绝——这是保护机制，不是 bug；不要改常量绕过。
-3. **ASR 执行器**（仅口播精剪需要）：默认找用户目录的
-   `scripts/transcribe.py`，或 `YICHEN_ASR_EXECUTOR` 指定绝对路径。
-   执行前确认兼容 asr_once.py 的参数约定并有服务授权。
-4. **ffmpeg/ffprobe**：素材探测与合成需要；macOS `brew install ffmpeg`。
+```bash
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/jydraft_check.py"
+```
 
-## 硬性边界（引擎自身的许可与设计）
+1. **引擎**：vendored pyJianYingDraft 在插件 `scripts/vendor/`（Apache-2.0，
+   `VENDOR.json` 逐文件 SHA-256 钉扎）。`engine: ok (vendored)` 即就绪——
+   无需 pip 安装。显示 `shadowed by pip` 说明引导丢失，报告不修。
+2. **媒体探测**：`pip install pymediainfo` + macOS `brew install mediainfo`
+   （Windows 装 MediaInfo 并加 PATH）。没有它 VideoMaterial/AudioMaterial
+   无法探测素材时长。
+3. **ffmpeg/ffprobe**：素材实测与预处理（`brew install ffmpeg`）。
+4. **草稿根**：启动一次剪映专业版并新建任意草稿（macOS
+   `~/Movies/JianyingPro/User Data/Projects/com.lveditor.draft`）。
+5. **fork 专业档（可选）**：仅原生导出/已有草稿编辑/ASR 记账需要——
+   `git clone https://github.com/partme-ai/jianying-headless` 并
+   `export JIANYING_HEADLESS_ROOT=<绝对路径>`。普通生成完全不依赖它。
 
-- 引擎按「私有源码预览」发布：Personal Learning and Non-Commercial。
-  商用需按原作者渠道取得授权；本插件不代为声明许可。
-- 官方程序库、账号资料、真实素材与效果资源不随引擎分发，本插件也不打包。
-- 特效资源只能来自本机已合法取得的匹配缓存（逐文件 hash 校验）；
-  缓存缺失时停止，不自动下载、不伪造授权身份。
+## 许可与边界
+
+- vendored 引擎与 jycut 均为 Apache-2.0，可商用分发；出处见
+  `THIRD_PARTY_NOTICES.md` 与 `cli/assets/ASSETS-PROVENANCE.md`。
+- fork 引擎（专业档）是 **Personal Learning and Non-Commercial**——继承上游
+  边界，本插件不代为声明商用许可；会员资源是授权边界不是障碍。
+- 生成的是原生草稿；最终导出由用户在剪映内完成（详见 `jianying-export-prep`）。
 
 ## Never do
 
-- Never 改引擎的固定版本、hash 常量或签名检查来"通过"预检。
-- Never 从非官方镜像安装剪映。
-- Never 自动充值、切换 ASR 服务商或重复提交付费请求。
+- Never 修改 vendor 内容或 hash 钉扎来"通过"检查。
+- Never 从非官方镜像安装剪映/MediaInfo。
+- Never 自动充值或提交付费资源请求。

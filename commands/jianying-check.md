@@ -1,14 +1,8 @@
 ---
-description: 剪映编辑环境预检：fork 检出、剪映 11.4.x、草稿根、资源目录
+description: 剪映编辑环境预检：vendored 引擎、MediaInfo、ffprobe、草稿根
 ---
 
-解析 `$JIANYING_HEADLESS_ROOT`（env → `~/workspaces/workspace-partme-ai/jianying-headless`
-→ 询问用户），然后运行：
-
-```bash
-python3 "$JIANYING_HEADLESS_ROOT/skills/yichen-jianying-edit/scripts/headless_draft.py" doctor
-```
-
-汇报：fork 检出与哈希钉扎状态、剪映版本是否符合 11.4.x 钉扎、草稿根路径、
-已采集资源目录健康度。缺什么按 `jianying-setup` 的指引给出对应命令
-（clone fork、装剪映、启动一次剪映建草稿）。不做任何草稿写入，不改 fork。
+运行 `python3 "${CLAUDE_PLUGIN_ROOT}/scripts/jydraft_check.py"` 并按 JSON 逐项汇报：
+vendored pyJianYingDraft 引擎健康度、pymediainfo/MediaInfo 探测、ffprobe/ffmpeg、
+草稿根路径。缺什么按 `jianying-setup` 的指引给出安装命令（pip/brew）。
+不做任何草稿写入，不改 vendor 内容。

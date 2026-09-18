@@ -1,55 +1,58 @@
 ---
 name: jianying-edit
-description: "Turn a jy14-headless-plan/v1 into a native, fully editable JianYing Pro draft via the jianying-headless engine: build -> verify-build -> publish -> verify. Also the edit-plan (口播 keeps/protect) compile path and copy-based editing of existing drafts. Non-destructive; draft name uniqueness enforced."
+description: "Core workflow: turn a requirement or shot plan into a native JianYing draft by writing a pyJianYingDraft script and running it in the vendored engine (jydraft_run.py). Multi-track video/text/audio, transitions, keyframes, styled text; deterministic, non-destructive, verified before delivery."
 ---
 
-# JianYing Edit（计划 → 原生草稿）
+# JianYing Edit（需求 → 原生草稿，核心工作流）
 
-引擎在 fork 检出内（见 `jianying-harness` 的命令面与环境）。你设计计划；
-引擎编译时间映射并无界面构建原生草稿。所有命令以绝对路径调用：
+引擎 = 插件内置的 vendored pyJianYingDraft（Apache-2.0）。你写生成脚本；
+库负责落盘合法草稿。运行器把 vendor 包前置到 `sys.path`：
 
 ```bash
-HD="$JIANYING_HEADLESS_ROOT/skills/yichen-jianying-edit/scripts/headless_draft.py"
+python3 "${CLAUDE_PLUGIN_ROOT}/scripts/jydraft_run.py" gen.py
 ```
 
-## 两条入口
+## 工作流
 
-- **直接写计划**（多轨视频/字幕/音频/滤镜/特效）→ 写 `jy14-headless-plan/v1`
-  （字段手册见 [references/plan-format.md](references/plan-format.md)，
-  亦可读 fork 内 `references/plan-format.md` 原文）→ `build` 链。
-- **口播精剪**（keeps/protect/subtitles）→ 写 `jianying-edit-plan/v1` →
-  `edit_plan.py compile` → `from-compiled` → `build` 链（见 `jianying-narration`）。
+1. **预检**：`jydraft_check.py`（见 `jianying-setup`）。缺 MediaInfo 探测时
+   如实报告，不要跳过实测。
+2. **实测素材**：ffprobe 每个素材的真实时长/分辨率（`jianying-inspect`）。
+   `duration_us` 用实测值；生成模型产物会漂移。
+3. **设计**：轨道分层（主视频轨承载连续叙事，黑场/间隙放画中画轨）、字幕
+   对齐实测语音、音频分层音量基线（能力细节见 subtitles/audio/motion/
+   transitions 各技能）。
+4. **写脚本**：按 `jianying-draft` 的 API 速查写 gen.py。纪律：
+   `DraftFolder` 的根目录必须先存在；`create_draft` 同名默认报错
+   （`allow_replace` 需用户明确同意）；`dump()` 用绝对路径。
+5. **运行**：`jydraft_run.py gen.py`。报错就是契约错误——修脚本，不要绕。
+6. **核验**：读回 `draft_content.json`（tracks/segments 数、transition/
+   keyframe 条目、duration = 各段末端最大值）。
+7. **交付**：草稿名 + 轨道摘要。用户在剪映开始页打开检查画面/字幕/音量/
+   切口后自行导出。
 
-## 工作流（直接写计划）
+## 最小骨架（可直接抄）
 
-1. **探测**：素材 ffprobe 实测时长（`jianying-inspect`）；`$HD doctor`
-   确认草稿根与运行时。计划里的 `duration_us` 用实测值，不用设计值。
-2. **写计划**：主视频轨必须是 `tracks[0]` 且首段从 0 起连续无黑场（间隙放
-   画中画轨）；fps ∈ {24,25,30,50,60}；草稿名为可见单层目录名。
-3. **build**：`$HD build --plan WORK/plan.json --out WORK/build`（纯产物，
-   不写剪映）。
-4. **verify-build**：`$HD verify-build --build WORK/build [--report WORK/verify-build.json]`。
-5. **publish**（剪映完全关闭后）：`$HD publish --build WORK/build --audit WORK/audit`。
-   中断后用 `resume-publish`（幂等）续做。
-6. **verify**：`$HD verify --build WORK/build`（已发布草稿的回读核验）。
-   一步到位可用 `$HD create --plan WORK/plan.json --work WORK/run`（= build+publish）。
-7. **交付**：用户在剪映开始页打开草稿检查画面/字幕/音量/切口。
+```python
+from pyJianYingDraft import (DraftFolder, TrackSpec, TrackType, VideoSegment,
+                             TextSegment, Timerange, TextStyle)
+import os
+os.makedirs("<工作目录>/store", exist_ok=True)
+script = DraftFolder("<工作目录>/store").create_draft("demo", 1920, 1080, fps=30)
+v = script.append_track(TrackSpec(TrackType.video))
+seg = VideoSegment("shot.mp4", target_timerange=Timerange(0, 3_000_000))
+script.add_segment(seg, v)
+script.dump("<工作目录>/store/demo/draft_content.json")
+```
 
-## 改已有草稿（独立副本）
+## 迭代与恢复
 
-`$HD edit inspect --draft <草稿目录> --out WORK/inspect.json` 先看结构；
-再按 fork 的 `edit-existing-macos.md` 用 `edit build/publish` 链在**副本**上改，
-原草稿永不被触碰。复合片段（嵌套时间线）走 `edit` 入口，不走主 `build`。
-
-## 原生导出
-
-`$HD export --build WORK/build --out WORK/export` 产出 `render.mp4`
-（`--bitrate` 默认 4M、`--timeout` 默认 600s）。仅吃**已验证 build 快照**；
-会员特效被隔离校验拦下时如实报告，改用普通资源或让用户在剪映内导出。
+- 被否决的剪辑 = 改脚本重跑；同名用新草稿名（加 `-v2` 日期后缀），旧稿留对比。
+- 用户在剪映里编辑过的草稿**永不覆盖**（`allow_replace` 门禁）。
+- 素材被移动：新路径回填脚本重跑，或在剪映里手动重链。
 
 ## Never do
 
-- Never 引用不存在的素材，或用计划时长代替 ffprobe 实测值。
-- Never 覆盖用户可能编辑过的同名草稿；publish 冲突时换名或走 resume-publish。
-- Never 绕过引擎的哈希钉扎与资源目录校验（改 fork、伪造 pin、下载未采集资源）。
-- Never 把会员标记当授权；商用许可边界见 `jianying-setup`。
+- Never 引用不存在的素材，或用设计时长冒充实测时长。
+- Never 覆盖用户可能编辑过的同名草稿。
+- Never 声称已自动化导出；Never 写死 pip 安装的 pyJianYingDraft（必须经
+  jydraft_run 引导 vendor 版，保证钉扎与可复现）。
