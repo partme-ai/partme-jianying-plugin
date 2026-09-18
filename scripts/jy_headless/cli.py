@@ -6,7 +6,11 @@ import json
 import sys
 from pathlib import Path
 
-from . import detect, generate
+if __package__ in (None, ""):
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+    from jy_headless import detect, generate
+else:
+    from . import detect, generate
 
 
 def main() -> int:
