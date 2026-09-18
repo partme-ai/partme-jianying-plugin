@@ -68,7 +68,7 @@ def main() -> int:
 
     # fork 直连完整性：禁止任何 vendored 引擎路径残留；路由必须指向 fork 入口脚本
     stale = []
-    skip_dirs = {".git", "node_modules", ".venv", "__pycache__", "jy_headless"}
+    skip_dirs = {".git", "node_modules", ".venv", "__pycache__", "jy_headless", "target"}
     for path in ROOT.rglob("*"):
         if not path.is_file() or skip_dirs.intersection(path.parts):
             continue
