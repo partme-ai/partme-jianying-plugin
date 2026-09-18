@@ -1,6 +1,7 @@
 ---
 name: jianying-narration
 description: "Narration condensing with pyJianYingDraft: ASR word-level transcript -> keep/protect decisions -> trimmed VideoSegments (target_timerange + source_timerange per keep) -> subtitles via import_srt. Millisecond cuts, human fine-tunes in 剪映."
+license: Apache-2.0
 ---
 
 # JianYing Narration（口播精剪）

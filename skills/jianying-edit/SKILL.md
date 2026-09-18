@@ -1,6 +1,7 @@
 ---
 name: jianying-edit
 description: "Core workflow: turn a requirement or shot plan into a native JianYing draft by writing a pyJianYingDraft script and running it in the vendored engine (jydraft_run.py). Multi-track video/text/audio, transitions, keyframes, styled text; deterministic, non-destructive, verified before delivery."
+license: Apache-2.0
 ---
 
 # JianYing Edit（需求 → 原生草稿，核心工作流）

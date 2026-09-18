@@ -25,3 +25,10 @@ node scripts/bump-plugin.mjs jianying-edit major   # 破坏性变更
   它们只能由 `scripts/bump-plugin.mjs` 与 `plugins/scripts/sync-marketplaces.mjs` 生成
 - 版本号必须全链一致（catalog + 4 manifest），`sync-marketplaces` 校验会拦截不一致
 - 插件本体放本仓根目录；`plugins/` 市场仓只存元数据，绝不物理包含插件代码
+
+### 技能体纪律（skills/ 是 vendored 快照，禁止直改）
+
+技能正典在 [full-aigc-skills/jianying-skills](https://github.com/full-aigc-skills/jianying-skills)：
+改技能 = 改上游仓并打 tag，然后 `python3 scripts/vendor/skill_vendor.py update`。
+`skills.lock.json` 锁定 ref/commit/逐技能摘要；`.github/workflows/skills-check.yml`
+拒绝绕过 lock 的 skills/ 直改，`skills-sync.yml` 在上游 dispatch 时自动开同步 PR。

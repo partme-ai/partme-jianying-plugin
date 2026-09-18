@@ -1,6 +1,7 @@
 ---
 name: jianying-recover
 description: "Draft conflict and recovery discipline for pyJianYingDraft workflows: allow_replace as the explicit overwrite gate, duplicate_as_template for copy-based iteration, name-conflict etiquette, and what never gets touched."
+license: Apache-2.0
 ---
 
 # JianYing Recover（草稿冲突与恢复）

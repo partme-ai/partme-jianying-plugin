@@ -1,6 +1,7 @@
 ---
 name: jianying-motion
 description: "Motion design with pyJianYingDraft: add_keyframe (KeyframeProperty, linear) for Ken Burns/push-in/drift, and add_animation (Intro/Outro/Group) for fades — alpha keyframes are ignored at render time, animations are the fade mechanism."
+license: Apache-2.0
 ---
 
 # JianYing Motion（关键帧与动画）

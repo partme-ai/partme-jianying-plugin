@@ -1,6 +1,7 @@
 ---
 name: jianying-use
 description: "Route JianYing (剪映专业版) draft-generation requests: environment preflight first (vendored pyJianYingDraft engine, MediaInfo probe, draft root), then route to pyJianYingDraft script generation (primary), the built-in Rust jycut CLI (fast plan path), narration condensing, subtitles, audio, motion, transitions, inspection, recovery, or the optional fork pro-tier. Drafts open as fully editable native JianYing projects."
+license: Apache-2.0
 ---
 
 # JianYing Edit Router

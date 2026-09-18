@@ -1,6 +1,7 @@
 ---
 name: jianying-transitions
 description: "Transition discipline with pyJianYingDraft: the 453-name Chinese TransitionType catalog (VIP-flagged metadata), add_transition on the outgoing segment, duration bounds, and rhythm pairing."
+license: Apache-2.0
 ---
 
 # JianYing Transitions（转场）

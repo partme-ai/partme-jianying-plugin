@@ -1,6 +1,7 @@
 ---
 name: jianying-export-prep
 description: "Pre-export checklist for a generated JianYing draft: JSON integrity, material availability, subtitle/audio sanity, cold-reopen advice, and honest export boundaries (in-app by the user; pyJianYingDraft's UIA export is Windows-only on legacy JianYing)."
+license: Apache-2.0
 ---
 
 # JianYing Export Prep（导出前检查清单）

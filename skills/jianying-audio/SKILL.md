@@ -1,6 +1,7 @@
 ---
 name: jianying-audio
 description: "Audio track design with pyJianYingDraft: AudioSegment (pure-audio materials only), narration/BGM/原声 layering with volume baselines, volume keyframes, scene-audio effects, measured-duration placement."
+license: Apache-2.0
 ---
 
 # JianYing Audio（音频轨设计）

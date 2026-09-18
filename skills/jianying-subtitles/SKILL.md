@@ -1,6 +1,7 @@
 ---
 name: jianying-subtitles
 description: "Subtitle/title design with pyJianYingDraft: TextSegment + TextStyle/TextBorder/TextBackground, per-sentence placement timed to measured speech, SRT batch import via import_srt, safe-area and no-overlap rules."
+license: Apache-2.0
 ---
 
 # JianYing Subtitles（字幕轨设计）

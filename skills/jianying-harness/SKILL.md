@@ -1,6 +1,7 @@
 ---
 name: jianying-harness
 description: "OPTIONAL pro-tier reference for the user's jianying-headless fork checkout (NC license): doctor / edit_plan compile+render-audio / asr_once / headless_draft from-compiled+build+publish+verify / resume-publish, the jy14-headless-plan/v1 contract, and known failure modes. Use when wiring, debugging, or extending automation flows."
+license: Apache-2.0
 ---
 
 # JianYing Harness（fork 专业档 CLI 全参考——可选）

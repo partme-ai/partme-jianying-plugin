@@ -1,6 +1,7 @@
 ---
 name: jianying-setup
 description: "Diagnose and fix the JianYing automation environment: vendored pyJianYingDraft engine health, pymediainfo + MediaInfo library, ffmpeg/ffprobe, draft root, and the optional fork pro-tier checkout. Advisory per-OS guidance."
+license: Apache-2.0
 ---
 
 # JianYing Setup（环境诊断与准备）

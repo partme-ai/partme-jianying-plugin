@@ -1,6 +1,7 @@
 ---
 name: jianying-inspect
 description: "Inspect materials and drafts before/after generation: ffprobe measured durations, draft JSON structure read-back, and the built-in jycut verify/inspect as lint tooling. Read-only."
+license: Apache-2.0
 ---
 
 # JianYing Inspect（素材与草稿探测）

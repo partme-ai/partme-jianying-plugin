@@ -1,6 +1,7 @@
 ---
 name: jianying-draft
 description: "pyJianYingDraft API cookbook for the vendored engine: DraftFolder/ScriptFile/TrackSpec/segments constructors with exact signatures, transitions (453-name TransitionType), keyframes, masks, styled text (TextStyle/TextBorder/TextShadow/TextBackground), animations, filters/effects, SRT import. The reference every generation script is written from."
+license: Apache-2.0
 ---
 
 # JianYing Draft（pyJianYingDraft API 手册）
