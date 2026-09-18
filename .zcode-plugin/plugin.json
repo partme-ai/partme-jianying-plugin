@@ -6,7 +6,7 @@
     "zh-CN": "剪映剪辑"
   },
   "version": "0.1.0",
-  "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — video/text/audio tracks, non-destructive generation, verified output.",
+  "description": "Turn edit-plan JSON into native, fully editable JianYing Pro drafts via a deterministic headless engine — multi-track video/text/audio, non-destructive, verified.",
   "description_i18n": {
     "en": "JianYing Pro draft generation from edit-plan JSON: multi-track video/text/audio, non-destructive, verified.",
     "zh-CN": "剪辑计划 JSON 一键生成剪映原生草稿：多轨视频/文字/音频、非破坏式生成、交付前校验。"
