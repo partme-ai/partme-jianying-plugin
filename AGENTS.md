@@ -18,6 +18,23 @@ node scripts/bump-plugin.mjs jianying-edit major   # 破坏性变更
 当日 `+codex.日期` 后缀）+ 三平台市场清单重新生成与校验。之后按脚本
 提示提交并 push **两个仓库**（本仓 + plugins 市场仓）。
 
+### 市场仓版本同步（强制，漏做用户就看不到更新）
+
+插件仓 bump+push 只是第一步——**ZCode/Codex/Kimi 感知更新看的是市场仓清单**。
+每次发版必须同步更新市场仓的 catalog 版本并重新生成清单：
+
+cd <市场仓目录>  # 本仓: workspace-agent-skills/full-aigc-plugins
+python3 - <<'EOF'
+import json
+d = json.load(open("catalog.json"))
+for p in d["plugins"]:
+    if p["id"] == "<插件id>": p["version"] = "<新版本号>"
+json.dump(d, open("catalog.json","w"), ensure_ascii=False, indent=2); open("catalog.json","a").write("
+")
+EOF
+node scripts/sync-marketplaces.mjs --write && node scripts/sync-marketplaces.mjs
+git add -A && git commit -m "release: <插件id> <版本>" && git push
+
 ### 硬性禁令
 
 - 禁止改代码不 bump 版本（「小版本也要发」）
@@ -25,10 +42,3 @@ node scripts/bump-plugin.mjs jianying-edit major   # 破坏性变更
   它们只能由 `scripts/bump-plugin.mjs` 与 `plugins/scripts/sync-marketplaces.mjs` 生成
 - 版本号必须全链一致（catalog + 4 manifest），`sync-marketplaces` 校验会拦截不一致
 - 插件本体放本仓根目录；`plugins/` 市场仓只存元数据，绝不物理包含插件代码
-
-### 技能体纪律（skills/ 是 vendored 快照，禁止直改）
-
-技能正典在 [full-aigc-skills/jianying-skills](https://github.com/full-aigc-skills/jianying-skills)：
-改技能 = 改上游仓并打 tag，然后 `python3 scripts/vendor/skill_vendor.py update`。
-`skills.lock.json` 锁定 ref/commit/逐技能摘要；`.github/workflows/skills-check.yml`
-拒绝绕过 lock 的 skills/ 直改，`skills-sync.yml` 在上游 dispatch 时自动开同步 PR。
