@@ -19,7 +19,7 @@ Status: **v0.6.0**（fork 直连架构：插件只带技能/命令/钩子，引�
 ## 内置引擎（v0.9.0 起：pyJianYingDraft 直驱 + jycut 快路径）
 
 - **主力引擎：vendored [pyJianYingDraft](https://github.com/GuanYixuan/pyJianYingDraft)**（Apache-2.0，`scripts/vendor/` 逐文件 SHA-256 钉扎）——技能家族直驱其完整 API：多轨、453 转场目录、关键帧、6 形蒙版、样式文本/描边/背景、入场出场动画、1052 滤镜与画面特效元数据、SRT 一键导入。运行器：`scripts/jydraft_run.py`；环境自检：`scripts/jydraft_check.py`。
-- **快路径：内置 Rust CLI `cli/`（jycut）**——`jycut-plan/v1` 确定性构建，自带 verify 门禁。
+- **快路径：Rust 引擎 [jianying-cli](https://github.com/full-aigc-plugins/jianying-cli)**（vendored 快照 `scripts/vendor/jianying-cli/`，v1.0.0 全能力：453 转场/1052 滤镜/特效/动画/蒙版/混音/SRT/代理渲染，`jianying-cli-plan/v1`）——构建 `cargo build --release` 后 `jianying build plan.json --out d1`。
 - **专业档（可选）：fork 检出**（`JIANYING_HEADLESS_ROOT`，NC 许可零改动驱动）——仅原生 MP4 导出、已有草稿编辑、ASR 记账。
 
 ```bash

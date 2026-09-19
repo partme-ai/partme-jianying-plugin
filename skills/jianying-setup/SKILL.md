@@ -27,7 +27,7 @@ python3 "${CLAUDE_PLUGIN_ROOT}/scripts/jydraft_check.py"
 
 ## 许可与边界
 
-- vendored 引擎与 jycut 均为 Apache-2.0，可商用分发；出处见
+- vendored 引擎与 jianying-cli（repo `full-aigc-plugins/jianying-cli`）均为 Apache-2.0，可商用分发；出处见
   `THIRD_PARTY_NOTICES.md` 与 `cli/assets/ASSETS-PROVENANCE.md`。
 - fork 引擎（专业档）是 **Personal Learning and Non-Commercial**——继承上游
   边界，本插件不代为声明商用许可；会员资源是授权边界不是障碍。

@@ -21,19 +21,19 @@
         "jianying-harness"
       ],
       "dest": "skills/",
-      "sha": "fdb0873f7bd072a0373a44fe7664479700de6888",
+      "sha": "99fb872c00ff14dbaf5b854327fc873877dfe309",
       "sha256": {
-        "jianying-use": "0e5baae79812d37f991c4d5c79f71b5d47c4d1677544ee94b7db41c5cf1a632f",
+        "jianying-use": "42c34e1f9cb4b40da2cbb4d2a9086f678ed3d8fb0f04b10f62573fe8b5746af4",
         "jianying-edit": "e421c1952eb49c0f5af11d895eece31a682e6b75bab152008e8ddbc41dd3f695",
         "jianying-draft": "136f48790d53a7de46a61ee3be7b994b76a83b12e27ca12b8e5a994fd934c7c1",
-        "jianying-setup": "c378ab3a1739d05a2bf2c80852bfb2b92ab9d49806721f5490b0f9f798c8884f",
+        "jianying-setup": "41a35096da8704e784ab6fb4697dbc2f8732c946bb8b2621f9044fe954275aae",
         "jianying-narration": "a18b605d51e2d433b1a90560f4ab6b036f407a52cd8de47f1fa07e618a224a62",
         "jianying-subtitles": "798b72d08a2db3b1f098e2036705eb95189f1f58187cfefd34169a997504320c",
         "jianying-audio": "e9891c15e98d4ade69a009e6b302f1f3420f53c061d97496c98a8ac7f54085b8",
         "jianying-motion": "a97722a41da419568e1c6242e7f0feea70b306c98dd3916d1685903d96e900bd",
         "jianying-transitions": "b1dff015e33fe5baed682b3d7bd53d37663915eba5c0838baf401afbd2c591c8",
-        "jianying-inspect": "4f24fb3fbaa0a70be913d315f46aea5a37366723decd252eabb8e64c78796ac9",
-        "jianying-export-prep": "7823bcdebb9ce7d0a05c647023e5378cb5e449529a8e654645999882249f7ac0",
+        "jianying-inspect": "2fafc440625164128ebe1a2c05964df528c9e59b371a5bf90acfcb67d0849069",
+        "jianying-export-prep": "7acbe4f8fc3f6f776d5f83fae696a28fdc3d2862a5451d0310a8e359f452e8a1",
         "jianying-recover": "e4803ccb5b76cce4f8ad54d46161b3bf8ef3e78572f95dee602f341aa924819e",
         "jianying-harness": "aa05ebdc18dc9a68cbc60fe5b0022c8d33c66e22e431d82842ca5ff7075d781b"
       }

@@ -9,7 +9,7 @@ license: Apache-2.0
 ## 1. 草稿完整性（只读）
 
 - `draft_content.json` + `draft_meta_info.json` 可解析；轨道/段数与设计一致。
-- `jycut verify <草稿目录>`：引用完整、主轨连续、时长一致。
+- `jianying verify <草稿目录>`：引用完整、主轨连续、时长一致。
 
 ## 2. 素材可用性
 

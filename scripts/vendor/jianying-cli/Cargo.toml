@@ -1,9 +1,13 @@
 [package]
-name = "jycut"
-version = "0.1.0"
+name = "jianying-cli"
+version = "1.0.0"
 edition = "2021"
-description = "Local CLI that builds verifiable, fully editable JianYing/CapCut drafts from a JSON plan — no account, no upload, deterministic."
+description = "Local JianYing/CapCut draft CLI in Rust — full-capability draft building from jianying-cli-plan/v1, verified and publishable, no account, no upload."
 license = "Apache-2.0"
+
+[[bin]]
+name = "jianying"
+path = "src/main.rs"
 
 [dependencies]
 anyhow = "1"

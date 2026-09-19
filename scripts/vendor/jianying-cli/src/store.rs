@@ -50,7 +50,7 @@ pub fn resolve_root(explicit: Option<&Path>) -> Result<PathBuf> {
         }
         return Ok(p);
     }
-    if let Ok(env) = std::env::var("JYCUT_DRAFT_ROOT") {
+    if let Ok(env) = std::env::var("JIANYING_CLI_DRAFT_ROOT") {
         let p = PathBuf::from(env);
         if p.is_dir() {
             return Ok(p);
@@ -62,7 +62,7 @@ pub fn resolve_root(explicit: Option<&Path>) -> Result<PathBuf> {
         }
     }
     bail!(
-        "no JianYing draft root found; launch 剪映专业版 once, or pass --root / set JYCUT_DRAFT_ROOT"
+        "no JianYing draft root found; launch 剪映专业版 once, or pass --root / set JIANYING_CLI_DRAFT_ROOT"
     );
 }
 

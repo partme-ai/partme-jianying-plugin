@@ -55,7 +55,8 @@ def main() -> int:
         "ffprobe": shutil.which("ffprobe") or "missing (素材实测需要)",
         "ffmpeg": shutil.which("ffmpeg") or "missing",
         "draft_roots": [{"path": str(r), "exists": r.is_dir()} for r in roots],
-        "rust_cli": str(ROOT / "cli" / "target" / "release" / "jycut"),
+        "jianying_cli": {"source": str(ROOT / "scripts" / "vendor" / "jianying-cli"),
+             "build": "cargo build --release (binary: target/release/jianying)"},
         "fork_pro_tier": {
             "env": bool(Path(p).is_dir()) if (p := __import__("os").environ.get("JIANYING_HEADLESS_ROOT")) else False,
             "hint": "仅原生导出/已有草稿编辑/ASR 记账需要；普通生成不需要",
