@@ -1,12 +1,12 @@
 {
   "name": "jianying-cli",
   "repo": "https://github.com/full-aigc-plugins/jianying-cli.git",
-  "ref": "v1.4.0",
+  "ref": "v1.4.1",
   "license": "Apache-2.0 (LICENSE inside this directory)",
   "note": "Vendored source snapshot of the full-capability Rust draft engine; build with cargo build --release. Verify hashes before updating the pin.",
   "file_count": 102,
   "files": {
-    ".github/workflows/ci.yml": "43e6f7cc638e2ff844572dda0345f1836919364bc60237dfcb1c78c2fbccd983",
+    ".github/workflows/ci.yml": "2d37165aa2f7a7f2f3c6d34320461d9afb1c96b83ea3b03dfc77370b27b0c950",
     ".gitignore": "2cdbc4093a27fe116463c1f9cfb53c1a919617887529ff3a7c946cde4ece7456",
     "Cargo.lock": "217823ded0b9abc93432d545ba98ee8d1a93a25177f44eb8b6ebe1e57a3f9822",
     "Cargo.toml": "369d23468616b1264bf514fd68f30636b59be4b8ebd6e17c242ce6489240ca04",

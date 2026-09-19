@@ -21,9 +21,10 @@ node scripts/bump-plugin.mjs jianying-edit major   # 破坏性变更
 ### 市场仓版本同步（强制，漏做用户就看不到更新）
 
 插件仓 bump+push 只是第一步——**ZCode/Codex/Kimi 感知更新看的是市场仓清单**。
-每次发版必须同步更新市场仓的 catalog 版本并重新生成清单：
+每次发版必须同步更新市场仓的 catalog 版本并重新生成清单
+（本生态市场仓：workspace-partme-ai/plugins）：
 
-cd <市场仓目录>  # 本仓: workspace-agent-skills/full-aigc-plugins
+cd <市场仓目录>
 python3 - <<'EOF'
 import json
 d = json.load(open("catalog.json"))

@@ -40,15 +40,13 @@ function resolvePluginsRoot() {
   if (path.basename(scriptDir) === "scripts" && fs.existsSync(path.join(scriptDir, "..", "catalog.json"))) {
     return path.resolve(scriptDir, "..");
   }
+  // 向上找市场仓：plugins / full-stack-plugins / full-aigc-plugins（任何 *-plugins 名下有 catalog.json 的兄弟目录）
   let dir = path.resolve(scriptDir, "..");
-  // 优先：插件仓位于 <市场名>-repositories/<插件>/ 下时，市场就是上两级的 <市场名>
-  const repoDirName = path.basename(path.dirname(dir));   // …/<市场>-repositories
-  if (repoDirName.endsWith("-repositories")) {
-    const market = path.join(path.dirname(path.dirname(dir)), repoDirName.replace(/-repositories$/, ""));
-    if (fs.existsSync(path.join(market, "catalog.json"))) return market;
-  }
   while (dir !== path.parse(dir).root) {
-    if (fs.existsSync(path.join(dir, "plugins", "catalog.json"))) return path.join(dir, "plugins");
+    const candidates = ["plugins", "full-stack-plugins", "full-aigc-plugins"];
+    for (const name of candidates) {
+      if (fs.existsSync(path.join(dir, name, "catalog.json"))) return path.join(dir, name);
+    }
     try {
       for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
         if (entry.isDirectory() && /-plugins$/.test(entry.name)
@@ -56,10 +54,10 @@ function resolvePluginsRoot() {
           return path.join(dir, entry.name);
         }
       }
-    } catch { /* 不可读目录跳过 */ }
+    } catch { /* 无读权限的目录跳过 */ }
     dir = path.dirname(dir);
   }
-  throw new Error("找不到插件市场仓。可设 PARTME_PLUGINS_ROOT 指定。");
+  throw new Error("找不到插件市场仓（含 catalog.json 的 plugins/*-plugins 目录）。可设 PARTME_PLUGINS_ROOT 指定。");
 }
 
 
@@ -77,7 +75,7 @@ const bump = (v) => {
 };
 
 const catalogPath = path.join(root, "catalog.json");
-const workspace = path.resolve(root, "..", "full-aigc-plugins-repositories");
+const workspace = path.dirname(root);
 const catalog = JSON.parse(fs.readFileSync(catalogPath, "utf8"));
 const plugin = catalog.plugins.find((p) => p.id === pluginId);
 if (!plugin) {
